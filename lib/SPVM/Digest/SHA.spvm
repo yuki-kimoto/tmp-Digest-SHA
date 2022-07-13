@@ -25,5 +25,27 @@ class Digest::SHA {
   native static method sha512256_hex : string ($data : string);
   native static method sha512256_base64 : string ($data : string);
   
+  native static method hmac_sha1 : string ($data : string, $key : string);
+  native static method hmac_sha1_hex : string ($data : string, $key : string);
+  native static method hmac_sha1_base64 : string ($data : string, $key : string);
+  native static method hmac_sha224 : string ($data : string, $key : string);
+  native static method hmac_sha224_hex : string ($data : string, $key : string);
+  native static method hmac_sha224_base64 : string ($data : string, $key : string);
+  native static method hmac_sha256 : string ($data : string, $key : string);
+  native static method hmac_sha256_hex : string ($data : string, $key : string);
+  native static method hmac_sha256_base64 : string ($data : string, $key : string);
+  native static method hmac_sha384 : string ($data : string, $key : string);
+  native static method hmac_sha384_hex : string ($data : string, $key : string);
+  native static method hmac_sha384_base64 : string ($data : string, $key : string);
+  native static method hmac_sha512 : string ($data : string, $key : string);
+  native static method hmac_sha512_hex : string ($data : string, $key : string);
+  native static method hmac_sha512_base64 : string ($data : string, $key : string);
+  native static method hmac_sha512224 : string ($data : string, $key : string);
+  native static method hmac_sha512224_hex : string ($data : string, $key : string);
+  native static method hmac_sha512224_base64 : string ($data : string, $key : string);
+  native static method hmac_sha512256 : string ($data : string, $key : string);
+  native static method hmac_sha512256_hex : string ($data : string, $key : string);
+  native static method hmac_sha512256_base64 : string ($data : string, $key : string);
+  
   native static method new : Digest::SHA ($alg : int);
 }
