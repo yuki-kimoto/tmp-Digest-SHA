@@ -20,34 +20,7 @@ static const int ix2alg[] =
 #define MAX_WRITE_SIZE 16384
 #define IO_BUFFER_SIZE 4096
 
-static SHA *getSHA(pTHX_ SV *self)
-{
-	if (!sv_isobject(self) || !sv_derived_from(self, "Digest::SHA"))
-		return(NULL);
-	return INT2PTR(SHA *, SvIV(SvRV(self)));
-}
-
-MODULE = Digest::SHA		PACKAGE = Digest::SHA
-
-PROTOTYPES: ENABLE
-
-int
-shainit(s, alg)
-	SHA *	s
-	int	alg
-
-void
-sharewind(s)
-	SHA *	s
-
-unsigned long
-shawrite(bitstr, bitcnt, s)
-	unsigned char *	bitstr
-	unsigned long	bitcnt
-	SHA *	s
-
-SV *
-newSHA(classname, alg)
+int32_t SPVM__Digest__SHA__new(SPVM_ENV* env, SPVM_VALUE* stack) {
 	char *	classname
 	int 	alg
 PREINIT:
@@ -61,34 +34,33 @@ CODE:
 	RETVAL = newSV(0);
 	sv_setref_pv(RETVAL, classname, (void *) state);
 	SvREADONLY_on(SvRV(RETVAL));
-OUTPUT:
-	RETVAL
+	return 0;
+}
 
-SV *
-clone(self)
+int32_t clone(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *	self
 PREINIT:
 	SHA *state;
 	SHA *clone;
 CODE:
-	if ((state = getSHA(aTHX_ self)) == NULL)
+	if ((state = self) == NULL)
 		XSRETURN_UNDEF;
 	Newx(clone, 1, SHA);
 	RETVAL = newSV(0);
 	sv_setref_pv(RETVAL, sv_reftype(SvRV(self), 1), (void *) clone);
 	SvREADONLY_on(SvRV(RETVAL));
 	Copy(state, clone, 1, SHA);
-OUTPUT:
-	RETVAL
+	return 0;
+}
 
-void
-DESTROY(s)
+int32_t DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SHA *	s
 CODE:
 	Safefree(s);
+	return 0;
+}
 
-SV *
-sha1(...)
+int32_t sha1(SPVM_ENV* env, SPVM_VALUE* stack) {
 ALIAS:
 	Digest::SHA::sha1 = 0
 	Digest::SHA::sha1_hex = 1
@@ -140,11 +112,10 @@ CODE:
 	else
 		result = shabase64(&sha);
 	RETVAL = newSVpv(result, len);
-OUTPUT:
-	RETVAL
+	return 0;
+}
 
-SV *
-hmac_sha1(...)
+int32_t hmac_sha1(SPVM_ENV* env, SPVM_VALUE* stack) {
 ALIAS:
 	Digest::SHA::hmac_sha1 = 0
 	Digest::SHA::hmac_sha1_hex = 1
@@ -203,8 +174,7 @@ CODE:
 OUTPUT:
 	RETVAL
 
-int
-hashsize(self)
+int32_t hashsize(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *	self
 ALIAS:
 	Digest::SHA::hashsize = 0
@@ -212,11 +182,11 @@ ALIAS:
 PREINIT:
 	SHA *state;
 CODE:
-	if ((state = getSHA(aTHX_ self)) == NULL)
+	if ((state = self) == NULL)
 		XSRETURN_UNDEF;
 	RETVAL = ix ? state->alg : (int) (state->digestlen << 3);
-OUTPUT:
-	RETVAL
+	return 0;
+}
 
 void
 add(self, ...)
@@ -227,7 +197,7 @@ PREINIT:
 	STRLEN len;
 	SHA *state;
 PPCODE:
-	if ((state = getSHA(aTHX_ self)) == NULL)
+	if ((state = self) == NULL)
 		XSRETURN_UNDEF;
 	for (i = 1; i < items; i++) {
 		data = (UCHR *) (SvPVbyte(ST(i), len));
@@ -238,10 +208,10 @@ PPCODE:
 		}
 		shawrite(data, (ULNG) len << 3, state);
 	}
-	XSRETURN(1);
+	return 0;
+}
 
-SV *
-digest(self)
+int32_t digest(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *	self
 ALIAS:
 	Digest::SHA::digest = 0
@@ -252,7 +222,7 @@ PREINIT:
 	SHA *state;
 	char *result;
 CODE:
-	if ((state = getSHA(aTHX_ self)) == NULL)
+	if ((state = self) == NULL)
 		XSRETURN_UNDEF;
 	shafinish(state);
 	len = 0;
@@ -266,18 +236,17 @@ CODE:
 		result = shabase64(state);
 	RETVAL = newSVpv(result, len);
 	sharewind(state);
-OUTPUT:
-	RETVAL
+	return 0;
+}
 
-SV *
-_getstate(self)
+int32_t _getstate(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *	self
 PREINIT:
 	SHA *state;
 	UCHR buf[256];
 	UCHR *ptr = buf;
 CODE:
-	if ((state = getSHA(aTHX_ self)) == NULL)
+	if ((state = self) == NULL)
 		XSRETURN_UNDEF;
 	Copy(digcpy(state), ptr, state->alg <= SHA256 ? 32 : 64, UCHR);
 	ptr += state->alg <= SHA256 ? 32 : 64;
@@ -292,8 +261,7 @@ CODE:
 OUTPUT:
 	RETVAL
 
-void
-_putstate(self, packed_state)
+int32_t _putstate(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *	self
 	SV *	packed_state
 PREINIT:
@@ -302,7 +270,7 @@ PREINIT:
 	SHA *state;
 	UCHR *data;
 PPCODE:
-	if ((state = getSHA(aTHX_ self)) == NULL)
+	if ((state = self) == NULL)
 		XSRETURN_UNDEF;
 	data = (UCHR *) SvPV(packed_state, len);
 	if (len != (state->alg <= SHA256 ? 116U : 212U))
@@ -318,10 +286,10 @@ PPCODE:
 	state->lenhl = memw32(data), data += 4;
 	state->lenlh = memw32(data), data += 4;
 	state->lenll = memw32(data);
-	XSRETURN(1);
+	return 0;
+}
 
-void
-_addfilebin(self, f)
+int32_t _addfilebin(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *		self
 	PerlIO *	f
 PREINIT:
@@ -329,14 +297,14 @@ PREINIT:
 	int n;
 	UCHR in[IO_BUFFER_SIZE];
 PPCODE:
-	if (!f || (state = getSHA(aTHX_ self)) == NULL)
+	if (!f || (state = self) == NULL)
 		XSRETURN_UNDEF;
 	while ((n = (int) PerlIO_read(f, in, sizeof(in))) > 0)
 		shawrite(in, (ULNG) n << 3, state);
-	XSRETURN(1);
+	return 0;
+}
 
-void
-_addfileuniv(self, f)
+int32_t _addfileuniv(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *		self
 	PerlIO *	f
 PREINIT:
@@ -347,7 +315,7 @@ PREINIT:
 	UCHR in[IO_BUFFER_SIZE+1];
 	SHA *state;
 PPCODE:
-	if (!f || (state = getSHA(aTHX_ self)) == NULL)
+	if (!f || (state = self) == NULL)
 		XSRETURN_UNDEF;
 	while ((n = (int) PerlIO_read(f, in+1, IO_BUFFER_SIZE)) > 0) {
 		for (dst = in, src = in + 1; n; n--) {
@@ -378,4 +346,6 @@ PPCODE:
 		in[0] = '\012';
 		shawrite(in, 1UL << 3, state);
 	}
-	XSRETURN(1);
+	
+	return 0;
+}
