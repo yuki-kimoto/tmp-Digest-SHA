@@ -81,7 +81,7 @@ const static int32_t DIGEST_SHA_SHA512256_BASE64 = 20;
 int32_t SPVM__Digest__SHA__sha(SPVM_ENV* env, SPVM_VALUE* stack) {
   int i;
   unsigned char *data;
-  STRLEN len;
+  int32_t len;
   SHA sha;
   char *result;
   if (!shainit(&sha, ix2alg[ix]))
@@ -156,7 +156,7 @@ int32_t SPVM__Digest__SHA__hmac_sha(SPVM_ENV* env, SPVM_VALUE* stack) {
   int i;
   unsigned char *key = (unsigned char *) "";
   unsigned char *data;
-  STRLEN len = 0;
+  int32_t len = 0;
   HMAC hmac;
   char *result;
   if (items > 0) {
@@ -232,7 +232,7 @@ int32_t SPVM__Digest__SHA__add(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   int i;
   unsigned char *data;
-  STRLEN len;
+  int32_t len;
   SHA *state;
   if ((state = self) == NULL)
     XSRETURN_UNDEF;
@@ -254,7 +254,7 @@ const static int32_t DIGEST_SHA_B64DIGEST = 2;
 
 int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
-  STRLEN len;
+  int32_t len;
   SHA *state;
   char *result;
   if ((state = self) == NULL)
@@ -294,7 +294,7 @@ int32_t SPVM__Digest__SHA___getstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   ptr = w32mem(ptr, state->lenhl);
   ptr = w32mem(ptr, state->lenlh);
   ptr = w32mem(ptr, state->lenll);
-  RETVAL = newSVpv((char *) buf, (STRLEN) (ptr - buf));
+  RETVAL = newSVpv((char *) buf, (int32_t) (ptr - buf));
 OUTPUT:
   RETVAL
 
@@ -302,7 +302,7 @@ int32_t SPVM__Digest__SHA___putstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   SV *  packed_state
   UINT bc;
-  STRLEN len;
+  int32_t len;
   SHA *state;
   unsigned char *data;
   if ((state = self) == NULL)
