@@ -4,7 +4,7 @@
 #define Zero(dest, nitems, type) memset(dest, 0, (nitems) * sizeof(type))
 
 
-int32_t SPVM__Digest__SHA__foo(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__SPVM__Digest__SHA__foo(SPVM_ENV* env, SPVM_VALUE* stack) {
   (void)env;
   (void)stack;
   
@@ -36,7 +36,7 @@ CODE:
   return 0;
 }
 
-int32_t clone(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__clone(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   SHA *state;
   SHA *clone;
@@ -51,14 +51,14 @@ CODE:
   return 0;
 }
 
-int32_t DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
   SHA * s
 CODE:
   Safefree(s);
   return 0;
 }
 
-int32_t sha1(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__sha1(SPVM_ENV* env, SPVM_VALUE* stack) {
 ALIAS:
   Digest::SHA::sha1 = 0
   Digest::SHA::sha1_hex = 1
@@ -112,7 +112,7 @@ CODE:
   return 0;
 }
 
-int32_t hmac_sha1(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__hmac_sha1(SPVM_ENV* env, SPVM_VALUE* stack) {
 ALIAS:
   Digest::SHA::hmac_sha1 = 0
   Digest::SHA::hmac_sha1_hex = 1
@@ -170,7 +170,7 @@ CODE:
 OUTPUT:
   RETVAL
 
-int32_t hashsize(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__hashsize(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
 ALIAS:
   Digest::SHA::hashsize = 0
@@ -204,7 +204,7 @@ add(self, ...)
   return 0;
 }
 
-int32_t digest(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__digest(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
 ALIAS:
   Digest::SHA::digest = 0
@@ -231,7 +231,7 @@ CODE:
   return 0;
 }
 
-int32_t _getstate(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA___getstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   SHA *state;
   unsigned char buf[256];
@@ -252,7 +252,7 @@ CODE:
 OUTPUT:
   RETVAL
 
-int32_t _putstate(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA___putstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   SV *  packed_state
   UINT bc;
@@ -278,7 +278,7 @@ int32_t _putstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   return 0;
 }
 
-int32_t _addfilebin(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA___addfilebin(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *    self
   PerlIO *  f
   SHA *state;
@@ -291,7 +291,7 @@ int32_t _addfilebin(SPVM_ENV* env, SPVM_VALUE* stack) {
   return 0;
 }
 
-int32_t _addfileuniv(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA___addfileuniv(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *    self
   PerlIO *  f
   unsigned char c;
