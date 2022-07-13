@@ -1,6 +1,10 @@
 class Digest::SHA {
   use Digest::SHA::State;
   has state : Digest::SHA::State;
+
+  # Field methods
+  native method hashsize : int ();
+  native method algorithm : int ();
   
   # Class methods
   native static method sha1 : string ($data : string);
@@ -48,4 +52,6 @@ class Digest::SHA {
   native static method hmac_sha512256_base64 : string ($data : string, $key : string);
   
   native static method new : Digest::SHA ($alg : int);
+  
+
 }

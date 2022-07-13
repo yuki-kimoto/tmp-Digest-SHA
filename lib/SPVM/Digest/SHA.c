@@ -259,20 +259,36 @@ int32_t SPVM__Digest__SHA__hmac_sha512256_hex(SPVM_ENV* env, SPVM_VALUE* stack) 
 int32_t SPVM__Digest__SHA__hmac_sha512256_base64(SPVM_ENV* env, SPVM_VALUE* stack) { stack[2].ival = DIGEST_SHA_HMAC_SHA512256_BASE64; return SPVM__Digest__SHA__hmac_sha(env, stack); }
 
 int32_t SPVM__Digest__SHA__hashsize(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SV *  self
-  SHA *state;
-  if ((state = self) == NULL)
-    XSRETURN_UNDEF;
-  RETVAL = 0 ? state->alg : (int) (state->digestlen << 3);
+  int32_t e;
+  
+  void* obj_self = stack[0].oval;
+  
+  void* obj_state = env->get_field_object_by_name(env, stack, obj_self, "Digest::SHA", "state", "Digest::SHA::State", &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  SHA* state = env->get_pointer(env, stack, obj_state);
+  
+  int32_t hashsize = state->digestlen;
+  
+  stack[0].ival = hashsize;
+  
   return 0;
 }
 
 int32_t SPVM__Digest__SHA__algorithm(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SV *  self
-  SHA *state;
-  if ((state = self) == NULL)
-    XSRETURN_UNDEF;
-  RETVAL = 1 ? state->alg : (int) (state->digestlen << 3);
+  int32_t e;
+  
+  void* obj_self = stack[0].oval;
+  
+  void* obj_state = env->get_field_object_by_name(env, stack, obj_self, "Digest::SHA", "state", "Digest::SHA::State", &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  SHA* state = env->get_pointer(env, stack, obj_state);
+  
+  int32_t hashsize = state->alg;
+  
+  stack[0].ival = hashsize;
+  
   return 0;
 }
 
