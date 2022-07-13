@@ -286,7 +286,6 @@ int32_t SPVM__Digest__SHA__algorithm(SPVM_ENV* env, SPVM_VALUE* stack) {
 }
 
 int32_t SPVM__Digest__SHA__add(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SV *  self
   int i;
   unsigned char *data;
   int32_t len;
@@ -321,7 +320,6 @@ const static int32_t DIGEST_SHA_HEXDIGEST = 1;
 const static int32_t DIGEST_SHA_B64DIGEST = 2;
 
 static int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SV *  self
   int32_t len;
   SHA *state;
   char *result;
