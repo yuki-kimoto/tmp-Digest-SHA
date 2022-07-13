@@ -23,7 +23,6 @@ static const int ix2alg[] =
 int32_t SPVM__Digest__SHA__new(SPVM_ENV* env, SPVM_VALUE* stack) {
 	char *	classname
 	int 	alg
-PREINIT:
 	SHA *state;
 CODE:
 	Newxz(state, 1, SHA);
@@ -39,7 +38,6 @@ CODE:
 
 int32_t clone(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *	self
-PREINIT:
 	SHA *state;
 	SHA *clone;
 CODE:
@@ -83,7 +81,6 @@ ALIAS:
 	Digest::SHA::sha512256 = 18
 	Digest::SHA::sha512256_hex = 19
 	Digest::SHA::sha512256_base64 = 20
-PREINIT:
 	int i;
 	UCHR *data;
 	STRLEN len;
@@ -138,7 +135,6 @@ ALIAS:
 	Digest::SHA::hmac_sha512256 = 18
 	Digest::SHA::hmac_sha512256_hex = 19
 	Digest::SHA::hmac_sha512256_base64 = 20
-PREINIT:
 	int i;
 	UCHR *key = (UCHR *) "";
 	UCHR *data;
@@ -179,7 +175,6 @@ int32_t hashsize(SPVM_ENV* env, SPVM_VALUE* stack) {
 ALIAS:
 	Digest::SHA::hashsize = 0
 	Digest::SHA::algorithm = 1
-PREINIT:
 	SHA *state;
 CODE:
 	if ((state = self) == NULL)
@@ -191,12 +186,10 @@ CODE:
 void
 add(self, ...)
 	SV *	self
-PREINIT:
 	int i;
 	UCHR *data;
 	STRLEN len;
 	SHA *state;
-PPCODE:
 	if ((state = self) == NULL)
 		XSRETURN_UNDEF;
 	for (i = 1; i < items; i++) {
@@ -217,7 +210,6 @@ ALIAS:
 	Digest::SHA::digest = 0
 	Digest::SHA::hexdigest = 1
 	Digest::SHA::b64digest = 2
-PREINIT:
 	STRLEN len;
 	SHA *state;
 	char *result;
@@ -241,7 +233,6 @@ CODE:
 
 int32_t _getstate(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *	self
-PREINIT:
 	SHA *state;
 	UCHR buf[256];
 	UCHR *ptr = buf;
@@ -264,12 +255,10 @@ OUTPUT:
 int32_t _putstate(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *	self
 	SV *	packed_state
-PREINIT:
 	UINT bc;
 	STRLEN len;
 	SHA *state;
 	UCHR *data;
-PPCODE:
 	if ((state = self) == NULL)
 		XSRETURN_UNDEF;
 	data = (UCHR *) SvPV(packed_state, len);
@@ -292,11 +281,9 @@ PPCODE:
 int32_t _addfilebin(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *		self
 	PerlIO *	f
-PREINIT:
 	SHA *state;
 	int n;
 	UCHR in[IO_BUFFER_SIZE];
-PPCODE:
 	if (!f || (state = self) == NULL)
 		XSRETURN_UNDEF;
 	while ((n = (int) PerlIO_read(f, in, sizeof(in))) > 0)
@@ -307,14 +294,12 @@ PPCODE:
 int32_t _addfileuniv(SPVM_ENV* env, SPVM_VALUE* stack) {
 	SV *		self
 	PerlIO *	f
-PREINIT:
 	UCHR c;
 	int n;
 	int cr = 0;
 	UCHR *src, *dst;
 	UCHR in[IO_BUFFER_SIZE+1];
 	SHA *state;
-PPCODE:
 	if (!f || (state = self) == NULL)
 		XSRETURN_UNDEF;
 	while ((n = (int) PerlIO_read(f, in+1, IO_BUFFER_SIZE)) > 0) {
