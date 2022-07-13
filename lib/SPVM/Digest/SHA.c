@@ -82,7 +82,7 @@ ALIAS:
   Digest::SHA::sha512256_hex = 19
   Digest::SHA::sha512256_base64 = 20
   int i;
-  UCHR *data;
+  unsigned char *data;
   STRLEN len;
   SHA sha;
   char *result;
@@ -90,7 +90,7 @@ CODE:
   if (!shainit(&sha, ix2alg[ix]))
     XSRETURN_UNDEF;
   for (i = 0; i < items; i++) {
-    data = (UCHR *) (SvPVbyte(ST(i), len));
+    data = (unsigned char *) (SvPVbyte(ST(i), len));
     while (len > MAX_WRITE_SIZE) {
       shawrite(data, MAX_WRITE_SIZE << 3, &sha);
       data += MAX_WRITE_SIZE;
@@ -136,19 +136,19 @@ ALIAS:
   Digest::SHA::hmac_sha512256_hex = 19
   Digest::SHA::hmac_sha512256_base64 = 20
   int i;
-  UCHR *key = (UCHR *) "";
-  UCHR *data;
+  unsigned char *key = (unsigned char *) "";
+  unsigned char *data;
   STRLEN len = 0;
   HMAC hmac;
   char *result;
 CODE:
   if (items > 0) {
-    key = (UCHR *) (SvPVbyte(ST(items-1), len));
+    key = (unsigned char *) (SvPVbyte(ST(items-1), len));
   }
   if (hmacinit(&hmac, ix2alg[ix], key, (UINT) len) == NULL)
     XSRETURN_UNDEF;
   for (i = 0; i < items - 1; i++) {
-    data = (UCHR *) (SvPVbyte(ST(i), len));
+    data = (unsigned char *) (SvPVbyte(ST(i), len));
     while (len > MAX_WRITE_SIZE) {
       hmacwrite(data, MAX_WRITE_SIZE << 3, &hmac);
       data += MAX_WRITE_SIZE;
@@ -187,13 +187,13 @@ void
 add(self, ...)
   SV *  self
   int i;
-  UCHR *data;
+  unsigned char *data;
   STRLEN len;
   SHA *state;
   if ((state = self) == NULL)
     XSRETURN_UNDEF;
   for (i = 1; i < items; i++) {
-    data = (UCHR *) (SvPVbyte(ST(i), len));
+    data = (unsigned char *) (SvPVbyte(ST(i), len));
     while (len > MAX_WRITE_SIZE) {
       shawrite(data, MAX_WRITE_SIZE << 3, state);
       data += MAX_WRITE_SIZE;
@@ -234,14 +234,14 @@ CODE:
 int32_t _getstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   SHA *state;
-  UCHR buf[256];
-  UCHR *ptr = buf;
+  unsigned char buf[256];
+  unsigned char *ptr = buf;
 CODE:
   if ((state = self) == NULL)
     XSRETURN_UNDEF;
-  Copy(digcpy(state), ptr, state->alg <= SHA256 ? 32 : 64, UCHR);
+  Copy(digcpy(state), ptr, state->alg <= SHA256 ? 32 : 64, unsigned char);
   ptr += state->alg <= SHA256 ? 32 : 64;
-  Copy(state->block, ptr, state->alg <= SHA256 ? 64 : 128, UCHR);
+  Copy(state->block, ptr, state->alg <= SHA256 ? 64 : 128, unsigned char);
   ptr += state->alg <= SHA256 ? 64 : 128;
   ptr = w32mem(ptr, state->blockcnt);
   ptr = w32mem(ptr, state->lenhh);
@@ -258,14 +258,14 @@ int32_t _putstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   UINT bc;
   STRLEN len;
   SHA *state;
-  UCHR *data;
+  unsigned char *data;
   if ((state = self) == NULL)
     XSRETURN_UNDEF;
-  data = (UCHR *) SvPV(packed_state, len);
+  data = (unsigned char *) SvPV(packed_state, len);
   if (len != (state->alg <= SHA256 ? 116U : 212U))
     XSRETURN_UNDEF;
   data = statecpy(state, data);
-  Copy(data, state->block, state->blocksize >> 3, UCHR);
+  Copy(data, state->block, state->blocksize >> 3, unsigned char);
   data += (state->blocksize >> 3);
   bc = memw32(data), data += 4;
   if (bc >= (state->alg <= SHA256 ? 512U : 1024U))
@@ -283,7 +283,7 @@ int32_t _addfilebin(SPVM_ENV* env, SPVM_VALUE* stack) {
   PerlIO *  f
   SHA *state;
   int n;
-  UCHR in[IO_BUFFER_SIZE];
+  unsigned char in[IO_BUFFER_SIZE];
   if (!f || (state = self) == NULL)
     XSRETURN_UNDEF;
   while ((n = (int) PerlIO_read(f, in, sizeof(in))) > 0)
@@ -294,11 +294,11 @@ int32_t _addfilebin(SPVM_ENV* env, SPVM_VALUE* stack) {
 int32_t _addfileuniv(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *    self
   PerlIO *  f
-  UCHR c;
+  unsigned char c;
   int n;
   int cr = 0;
-  UCHR *src, *dst;
-  UCHR in[IO_BUFFER_SIZE+1];
+  unsigned char *src, *dst;
+  unsigned char in[IO_BUFFER_SIZE+1];
   SHA *state;
   if (!f || (state = self) == NULL)
     XSRETURN_UNDEF;
