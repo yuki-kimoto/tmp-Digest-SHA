@@ -88,8 +88,8 @@ static int32_t SPVM__Digest__SHA__sha(SPVM_ENV* env, SPVM_VALUE* stack) {
     return env->die(env, stack, "Can't initalize SHA state. The specified algorithm is %d", alg, FILE_NAME, __LINE__);
   }
 
-  data = (unsigned char *)env->get_chars(env, stack, obj_string);
-  len = env->length(env, stack, obj_string);
+  data = (unsigned char *)env->get_chars(env, stack, obj_data);
+  len = env->length(env, stack, obj_data);
   
   while (len > MAX_WRITE_SIZE) {
     shawrite(data, MAX_WRITE_SIZE << 3, &sha);
@@ -297,18 +297,29 @@ int32_t SPVM__Digest__SHA__add(SPVM_ENV* env, SPVM_VALUE* stack) {
   int i;
   unsigned char *data;
   int32_t len;
-  SHA *state;
-  if ((state = self) == NULL)
-    XSRETURN_UNDEF;
-  for (i = 1; i < items; i++) {
-    data = (unsigned char *) (SvPVbyte(ST(i), len));
-    while (len > MAX_WRITE_SIZE) {
-      shawrite(data, MAX_WRITE_SIZE << 3, state);
-      data += MAX_WRITE_SIZE;
-      len  -= MAX_WRITE_SIZE;
-    }
-    shawrite(data, (ULNG) len << 3, state);
+  
+  int32_t e;
+  
+  void* obj_self = stack[0].oval;
+  
+  void* obj_state = env->get_field_object_by_name(env, stack, obj_self, "Digest::SHA", "state", "Digest::SHA::State", &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  void* obj_data = stack[1].oval;
+  
+  data = (unsigned char *)env->get_chars(env, stack, obj_data);
+  len = env->length(env, stack, obj_data);
+  
+  SHA* state = env->get_pointer(env, stack, obj_state);
+  
+  data = (unsigned char *) (SvPVbyte(ST(i), len));
+  while (len > MAX_WRITE_SIZE) {
+    shawrite(data, MAX_WRITE_SIZE << 3, state);
+    data += MAX_WRITE_SIZE;
+    len  -= MAX_WRITE_SIZE;
   }
+  shawrite(data, (ULNG) len << 3, state);
+  
   return 0;
 }
 
@@ -321,23 +332,38 @@ static int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack
   int32_t len;
   SHA *state;
   char *result;
-  if ((state = self) == NULL)
-    XSRETURN_UNDEF;
+  
+  void* obj_self = stack[0].oval;
+  
+  void* obj_state = env->get_field_object_by_name(env, stack, obj_self, "Digest::SHA", "state", "Digest::SHA::State", &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  SHA* state = env->get_pointer(env, stack, obj_state);
+  
+  int32_t ix = stack[1].ival;
+  
   shafinish(state);
   len = 0;
   if (ix == 0) {
     result = (char *) shadigest(state);
     len = state->digestlen;
   }
-  else if (ix == 1)
+  else if (ix == 1) {
     result = shahex(state);
-  else
+  }
+  else {
     result = shabase64(state);
-  RETVAL = newSVpv(result, len);
+  }
+  
+  void* obj_result = env->new_string(env, stack, result, len);
+  
+  stack[0].oval = obj_result;
+  
   sharewind(state);
+  
   return 0;
 }
 
-int32_t SPVM__Digest__SHA__digest(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
-int32_t SPVM__Digest__SHA__hexdigest(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
-int32_t SPVM__Digest__SHA__b64digest(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__digest(SPVM_ENV* env, SPVM_VALUE* stack) { stack[1].ival = DIGEST_SHA_DIGEST; return SPVM__Digest__SHA__digest_common(env, stack); }
+int32_t SPVM__Digest__SHA__hexdigest(SPVM_ENV* env, SPVM_VALUE* stack) { stack[1].ival = DIGEST_SHA_HEXDIGEST; return SPVM__Digest__SHA__digest_common(env, stack); }
+int32_t SPVM__Digest__SHA__b64digest(SPVM_ENV* env, SPVM_VALUE* stack) { stack[1].ival = DIGEST_SHA_B64DIGEST; return SPVM__Digest__SHA__digest_common(env, stack); }

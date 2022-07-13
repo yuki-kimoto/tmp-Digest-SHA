@@ -53,5 +53,9 @@ class Digest::SHA {
   
   native static method new : Digest::SHA ($alg : int);
   
-
+  # Instance methods
+  native method add : void ($date : string);
+  native method digest : string ();
+  native method hexdigest : string ();
+  native method b64digest : string ();
 }
