@@ -52,6 +52,22 @@ int32_t SPVM__Digest__SHA__new(SPVM_ENV* env, SPVM_VALUE* stack) {
 }
 
 int32_t SPVM__Digest__SHA__DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
+  int32_t e;
+  
+  void* obj_self = stack[0].oval;
+  
+  void* obj_state = env->get_field_object_by_name(env, stack, obj_self, "Digest::SHA", "state", "Digest::SHA::State", &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  SHA* state = env->get_pointer(env, stack, obj_state);
+  assert(state);
+  
+  env->free_memory_stack(env, stack, state);
+  
+  return 0;
+}
+
+int32_t SPVM__Digest__SHA__DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
   SHA * s
   Safefree(s);
   return 0;
