@@ -2,7 +2,6 @@
 
 #define Copy(src, dest, nitems, type) memcpy(dest, src, (nitems) * sizeof(type))
 #define Zero(dest, nitems, type) memset(dest, 0, (nitems) * sizeof(type))
-#define Safefree(object) free(object)
 
 
 int32_t SPVM__Digest__SHA__SPVM__Digest__SHA__foo(SPVM_ENV* env, SPVM_VALUE* stack) {
@@ -19,7 +18,6 @@ static const int ix2alg[] =
   512224,512224,512224,512256,512256,512256};
 
 #define MAX_WRITE_SIZE 16384
-#define IO_BUFFER_SIZE 4096
 
 int32_t SPVM__Digest__SHA__new(SPVM_ENV* env, SPVM_VALUE* stack) {
   char *  classname
@@ -321,62 +319,5 @@ int32_t SPVM__Digest__SHA___putstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   state->lenhl = memw32(data), data += 4;
   state->lenlh = memw32(data), data += 4;
   state->lenll = memw32(data);
-  return 0;
-}
-
-int32_t SPVM__Digest__SHA___addfilebin(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SV *    self
-  PerlIO *  f
-  SHA *state;
-  int n;
-  unsigned char in[IO_BUFFER_SIZE];
-  if (!f || (state = self) == NULL)
-    XSRETURN_UNDEF;
-  while ((n = (int) PerlIO_read(f, in, sizeof(in))) > 0)
-    shawrite(in, (ULNG) n << 3, state);
-  return 0;
-}
-
-int32_t SPVM__Digest__SHA___addfileuniv(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SV *    self
-  PerlIO *  f
-  unsigned char c;
-  int n;
-  int cr = 0;
-  unsigned char *src, *dst;
-  unsigned char in[IO_BUFFER_SIZE+1];
-  SHA *state;
-  if (!f || (state = self) == NULL)
-    XSRETURN_UNDEF;
-  while ((n = (int) PerlIO_read(f, in+1, IO_BUFFER_SIZE)) > 0) {
-    for (dst = in, src = in + 1; n; n--) {
-      c = *src++;
-      if (!cr) {
-        if (c == '\015')
-          cr = 1;
-        else
-          *dst++ = c;
-      }
-      else {
-        if (c == '\015')
-          *dst++ = '\012';
-        else if (c == '\012') {
-          *dst++ = '\012';
-          cr = 0;
-        }
-        else {
-          *dst++ = '\012';
-          *dst++ = c;
-          cr = 0;
-        }
-      }
-    }
-    shawrite(in, (ULNG) (dst - in) << 3, state);
-  }
-  if (cr) {
-    in[0] = '\012';
-    shawrite(in, 1UL << 3, state);
-  }
-  
   return 0;
 }
