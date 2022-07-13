@@ -1,0 +1,1 @@
+class SHA::State : pointer_t;

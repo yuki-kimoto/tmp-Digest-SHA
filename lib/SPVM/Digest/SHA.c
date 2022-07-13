@@ -1,8 +1,12 @@
 #include "spvm_native.h"
 
+#include <string.h>
+#include <assert.h>
+
+const char* FILE_NAME = "SPVM/Digest/SHA.c";
+
 #define Copy(src, dest, nitems, type) memcpy(dest, src, (nitems) * sizeof(type))
 #define Zero(dest, nitems, type) memset(dest, 0, (nitems) * sizeof(type))
-
 
 int32_t SPVM__Digest__SHA__SPVM__Digest__SHA__foo(SPVM_ENV* env, SPVM_VALUE* stack) {
   (void)env;
@@ -20,17 +24,30 @@ static const int ix2alg[] =
 #define MAX_WRITE_SIZE 16384
 
 int32_t SPVM__Digest__SHA__new(SPVM_ENV* env, SPVM_VALUE* stack) {
-  char *  classname
-  int   alg
-  SHA *state;
-  Newxz(state, 1, SHA);
+
+  int32_t e;
+  
+  int32_t alg = stack[0].ival;
+  
+  void* obj_self = env->new_object_by_name(env, stack, "Digest::SHA", &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  SHA *state = env->new_memory_stack(env, stack, sizeof(SHA));
+
   if (!shainit(state, alg)) {
-    Safefree(state);
-    XSRETURN_UNDEF;
+    env->free_memory_stack(env, stack, state);
+    return env->die(env, stack, "Can't initalize SHA state. The specified algorithm is %d", alg, FILE_NAME, __LINE__);
   }
-  RETVAL = newSV(0);
-  sv_setref_pv(RETVAL, classname, (void *) state);
-  SvREADONLY_on(SvRV(RETVAL));
+  
+  void* obj_state = env->new_object_by_name(env, stack, "Digest::SHA::State", &e, FILE_NAME, __LINE__);
+  
+  env->set_pointer(env, stack, obj_state, state);
+  
+  env->set_field_object_by_name(env, stack, obj_self, "Digest::SHA", "state", "Digest::SHA::State", obj_state, &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  stack[0].oval = obj_self;
+  
   return 0;
 }
 
