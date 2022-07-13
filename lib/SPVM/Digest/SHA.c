@@ -67,12 +67,6 @@ int32_t SPVM__Digest__SHA__DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
   return 0;
 }
 
-int32_t SPVM__Digest__SHA__DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SHA * s
-  Safefree(s);
-  return 0;
-}
-
 const static int32_t DIGEST_SHA_SHA1 = 0;
 const static int32_t DIGEST_SHA_SHA1_HEX = 1;
 const static int32_t DIGEST_SHA_SHA1_BASE64 = 2;
