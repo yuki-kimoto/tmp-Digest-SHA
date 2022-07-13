@@ -2,6 +2,7 @@
 
 #define Copy(src, dest, nitems, type) memcpy(dest, src, (nitems) * sizeof(type))
 #define Zero(dest, nitems, type) memset(dest, 0, (nitems) * sizeof(type))
+#define Safefree(object) free(object)
 
 
 int32_t SPVM__Digest__SHA__SPVM__Digest__SHA__foo(SPVM_ENV* env, SPVM_VALUE* stack) {
@@ -55,7 +56,7 @@ int32_t SPVM__Digest__SHA__DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
   return 0;
 }
 
-int32_t SPVM__Digest__SHA__sha1(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__sha(SPVM_ENV* env, SPVM_VALUE* stack) {
 ALIAS:
   Digest::SHA::sha1 = 0
   Digest::SHA::sha1_hex = 1
@@ -108,7 +109,28 @@ ALIAS:
   return 0;
 }
 
-int32_t SPVM__Digest__SHA__hmac_sha1(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__sha1_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha1_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha224(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha224_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha224_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha256(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha256_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha256_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha384(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha384_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha384_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha512(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha512_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha512_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha512224(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha512224_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha512224_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha512256(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha512256_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__sha512256_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }int32_t SPVM__Digest__SHA__sha1(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+
+int32_t SPVM__Digest__SHA__hmac_sha(SPVM_ENV* env, SPVM_VALUE* stack) {
 ALIAS:
   Digest::SHA::hmac_sha1 = 0
   Digest::SHA::hmac_sha1_hex = 1
@@ -162,23 +184,51 @@ ALIAS:
   else
     result = hmacbase64(&hmac);
   RETVAL = newSVpv(result, len);
-OUTPUT:
-  RETVAL
+  return 0;
+}
+
+int32_t SPVM__Digest__SHA__hmac_sha1(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha1_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha1_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha224(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha224_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha224_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha256(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha256_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha256_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha384(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha384_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha384_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha512(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha512_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha512_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha512224(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha512224_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha512224_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha512256(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha512256_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hmac_sha512256_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
 
 int32_t SPVM__Digest__SHA__hashsize(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
-ALIAS:
-  Digest::SHA::hashsize = 0
-  Digest::SHA::algorithm = 1
   SHA *state;
   if ((state = self) == NULL)
     XSRETURN_UNDEF;
-  RETVAL = ix ? state->alg : (int) (state->digestlen << 3);
+  RETVAL = 0 ? state->alg : (int) (state->digestlen << 3);
+  return 0;
+}
+
+int32_t SPVM__Digest__SHA__algorithm(SPVM_ENV* env, SPVM_VALUE* stack) {
+  SV *  self
+  SHA *state;
+  if ((state = self) == NULL)
+    XSRETURN_UNDEF;
+  RETVAL = 1 ? state->alg : (int) (state->digestlen << 3);
   return 0;
 }
 
 void
-add(self, ...)
+int32_t SPVM__Digest__SHA__add(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   int i;
   unsigned char *data;
