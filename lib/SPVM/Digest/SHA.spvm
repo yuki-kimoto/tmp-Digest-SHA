@@ -1,5 +1,29 @@
 class Digest::SHA {
   use Digest::SHA::State;
   has state : Digest::SHA::State;
+  
+  # Class methods
+  native static method sha1 : string ($data : string);
+  native static method sha1_hex : string ($data : string);
+  native static method sha1_base64 : string ($data : string);
+  native static method sha224 : string ($data : string);
+  native static method sha224_hex : string ($data : string);
+  native static method sha224_base64 : string ($data : string);
+  native static method sha256 : string ($data : string);
+  native static method sha256_hex : string ($data : string);
+  native static method sha256_base64 : string ($data : string);
+  native static method sha384 : string ($data : string);
+  native static method sha384_hex : string ($data : string);
+  native static method sha384_base64 : string ($data : string);
+  native static method sha512 : string ($data : string);
+  native static method sha512_hex : string ($data : string);
+  native static method sha512_base64 : string ($data : string);
+  native static method sha512224 : string ($data : string);
+  native static method sha512224_hex : string ($data : string);
+  native static method sha512224_base64 : string ($data : string);
+  native static method sha512256 : string ($data : string);
+  native static method sha512256_hex : string ($data : string);
+  native static method sha512256_base64 : string ($data : string);
+  
   native static method new : Digest::SHA ($alg : int);
 }
