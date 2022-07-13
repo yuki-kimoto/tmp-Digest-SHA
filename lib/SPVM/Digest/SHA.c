@@ -24,7 +24,6 @@ int32_t SPVM__Digest__SHA__new(SPVM_ENV* env, SPVM_VALUE* stack) {
   char *  classname
   int   alg
   SHA *state;
-CODE:
   Newxz(state, 1, SHA);
   if (!shainit(state, alg)) {
     Safefree(state);
@@ -40,7 +39,6 @@ int32_t SPVM__Digest__SHA__clone(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   SHA *state;
   SHA *clone;
-CODE:
   if ((state = self) == NULL)
     XSRETURN_UNDEF;
   Newx(clone, 1, SHA);
@@ -53,7 +51,6 @@ CODE:
 
 int32_t SPVM__Digest__SHA__DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
   SHA * s
-CODE:
   Safefree(s);
   return 0;
 }
@@ -86,7 +83,6 @@ ALIAS:
   STRLEN len;
   SHA sha;
   char *result;
-CODE:
   if (!shainit(&sha, ix2alg[ix]))
     XSRETURN_UNDEF;
   for (i = 0; i < items; i++) {
@@ -141,7 +137,6 @@ ALIAS:
   STRLEN len = 0;
   HMAC hmac;
   char *result;
-CODE:
   if (items > 0) {
     key = (unsigned char *) (SvPVbyte(ST(items-1), len));
   }
@@ -176,7 +171,6 @@ ALIAS:
   Digest::SHA::hashsize = 0
   Digest::SHA::algorithm = 1
   SHA *state;
-CODE:
   if ((state = self) == NULL)
     XSRETURN_UNDEF;
   RETVAL = ix ? state->alg : (int) (state->digestlen << 3);
@@ -213,7 +207,6 @@ ALIAS:
   STRLEN len;
   SHA *state;
   char *result;
-CODE:
   if ((state = self) == NULL)
     XSRETURN_UNDEF;
   shafinish(state);
@@ -236,7 +229,6 @@ int32_t SPVM__Digest__SHA___getstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   SHA *state;
   unsigned char buf[256];
   unsigned char *ptr = buf;
-CODE:
   if ((state = self) == NULL)
     XSRETURN_UNDEF;
   Copy(digcpy(state), ptr, state->alg <= SHA256 ? 32 : 64, unsigned char);
