@@ -34,20 +34,6 @@ int32_t SPVM__Digest__SHA__new(SPVM_ENV* env, SPVM_VALUE* stack) {
   return 0;
 }
 
-int32_t SPVM__Digest__SHA__clone(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SV *  self
-  SHA *state;
-  SHA *clone;
-  if ((state = self) == NULL)
-    XSRETURN_UNDEF;
-  Newx(clone, 1, SHA);
-  RETVAL = newSV(0);
-  sv_setref_pv(RETVAL, sv_reftype(SvRV(self), 1), (void *) clone);
-  SvREADONLY_on(SvRV(RETVAL));
-  Copy(state, clone, 1, SHA);
-  return 0;
-}
-
 int32_t SPVM__Digest__SHA__DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
   SHA * s
   Safefree(s);
@@ -76,7 +62,7 @@ const static int32_t DIGEST_SHA_SHA512256 = 18;
 const static int32_t DIGEST_SHA_SHA512256_HEX = 19;
 const static int32_t DIGEST_SHA_SHA512256_BASE64 = 20;
 
-int32_t SPVM__Digest__SHA__sha(SPVM_ENV* env, SPVM_VALUE* stack) {
+static int32_t SPVM__Digest__SHA__sha(SPVM_ENV* env, SPVM_VALUE* stack) {
   int i;
   unsigned char *data;
   int32_t len;
@@ -150,7 +136,7 @@ const static int32_t DIGEST_SHA_HMAC_SHA512256 = 18;
 const static int32_t DIGEST_SHA_HMAC_SHA512256_HEX = 19;
 const static int32_t DIGEST_SHA_HMAC_SHA512256_BASE64 = 20;
 
-int32_t SPVM__Digest__SHA__hmac_sha(SPVM_ENV* env, SPVM_VALUE* stack) {
+static int32_t SPVM__Digest__SHA__hmac_sha(SPVM_ENV* env, SPVM_VALUE* stack) {
   int i;
   unsigned char *key = (unsigned char *) "";
   unsigned char *data;
@@ -225,7 +211,6 @@ int32_t SPVM__Digest__SHA__algorithm(SPVM_ENV* env, SPVM_VALUE* stack) {
   return 0;
 }
 
-void
 int32_t SPVM__Digest__SHA__add(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   int i;
@@ -250,7 +235,7 @@ const static int32_t DIGEST_SHA_DIGEST = 0;
 const static int32_t DIGEST_SHA_HEXDIGEST = 1;
 const static int32_t DIGEST_SHA_B64DIGEST = 2;
 
-int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack) {
+static int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   int32_t len;
   SHA *state;
@@ -275,49 +260,3 @@ int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack) {
 int32_t SPVM__Digest__SHA__digest(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
 int32_t SPVM__Digest__SHA__hexdigest(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
 int32_t SPVM__Digest__SHA__b64digest(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
-
-int32_t SPVM__Digest__SHA___getstate(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SV *  self
-  SHA *state;
-  unsigned char buf[256];
-  unsigned char *ptr = buf;
-  if ((state = self) == NULL)
-    XSRETURN_UNDEF;
-  Copy(digcpy(state), ptr, state->alg <= SHA256 ? 32 : 64, unsigned char);
-  ptr += state->alg <= SHA256 ? 32 : 64;
-  Copy(state->block, ptr, state->alg <= SHA256 ? 64 : 128, unsigned char);
-  ptr += state->alg <= SHA256 ? 64 : 128;
-  ptr = w32mem(ptr, state->blockcnt);
-  ptr = w32mem(ptr, state->lenhh);
-  ptr = w32mem(ptr, state->lenhl);
-  ptr = w32mem(ptr, state->lenlh);
-  ptr = w32mem(ptr, state->lenll);
-  RETVAL = newSVpv((char *) buf, (int32_t) (ptr - buf));
-OUTPUT:
-  RETVAL
-
-int32_t SPVM__Digest__SHA___putstate(SPVM_ENV* env, SPVM_VALUE* stack) {
-  SV *  self
-  SV *  packed_state
-  UINT bc;
-  int32_t len;
-  SHA *state;
-  unsigned char *data;
-  if ((state = self) == NULL)
-    XSRETURN_UNDEF;
-  data = (unsigned char *) SvPV(packed_state, len);
-  if (len != (state->alg <= SHA256 ? 116U : 212U))
-    XSRETURN_UNDEF;
-  data = statecpy(state, data);
-  Copy(data, state->block, state->blocksize >> 3, unsigned char);
-  data += (state->blocksize >> 3);
-  bc = memw32(data), data += 4;
-  if (bc >= (state->alg <= SHA256 ? 512U : 1024U))
-    XSRETURN_UNDEF;
-  state->blockcnt = bc;
-  state->lenhh = memw32(data), data += 4;
-  state->lenhl = memw32(data), data += 4;
-  state->lenlh = memw32(data), data += 4;
-  state->lenll = memw32(data);
-  return 0;
-}
