@@ -248,12 +248,12 @@ int32_t SPVM__Digest__SHA__add(SPVM_ENV* env, SPVM_VALUE* stack) {
   return 0;
 }
 
+const static int32_t DIGEST_SHA_DIGEST = 0;
+const static int32_t DIGEST_SHA_HEXDIGEST = 1;
+const static int32_t DIGEST_SHA_B64DIGEST = 2;
+
 int32_t SPVM__Digest__SHA__digest(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
-ALIAS:
-  Digest::SHA::digest = 0
-  Digest::SHA::hexdigest = 1
-  Digest::SHA::b64digest = 2
   STRLEN len;
   SHA *state;
   char *result;
