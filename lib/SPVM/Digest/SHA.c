@@ -304,7 +304,6 @@ int32_t SPVM__Digest__SHA__add(SPVM_ENV* env, SPVM_VALUE* stack) {
   
   SHA* state = env->get_pointer(env, stack, obj_state);
   
-  data = (unsigned char *) (SvPVbyte(ST(i), len));
   while (len > MAX_WRITE_SIZE) {
     shawrite(data, MAX_WRITE_SIZE << 3, state);
     data += MAX_WRITE_SIZE;
@@ -320,8 +319,9 @@ const static int32_t DIGEST_SHA_HEXDIGEST = 1;
 const static int32_t DIGEST_SHA_B64DIGEST = 2;
 
 static int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack) {
+  int32_t e;
+  
   int32_t len;
-  SHA *state;
   char *result;
   
   void* obj_self = stack[0].oval;
