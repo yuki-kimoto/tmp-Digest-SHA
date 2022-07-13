@@ -56,29 +56,29 @@ int32_t SPVM__Digest__SHA__DESTROY(SPVM_ENV* env, SPVM_VALUE* stack) {
   return 0;
 }
 
+const static int32_t DIGEST_SHA_SHA1 = 0;
+const static int32_t DIGEST_SHA_SHA1_HEX = 1;
+const static int32_t DIGEST_SHA_SHA1_BASE64 = 2;
+const static int32_t DIGEST_SHA_SHA224 = 3;
+const static int32_t DIGEST_SHA_SHA224_HEX = 4;
+const static int32_t DIGEST_SHA_SHA224_BASE64 = 5;
+const static int32_t DIGEST_SHA_SHA256 = 6;
+const static int32_t DIGEST_SHA_SHA256_HEX = 7;
+const static int32_t DIGEST_SHA_SHA256_BASE64 = 8;
+const static int32_t DIGEST_SHA_SHA384 = 9;
+const static int32_t DIGEST_SHA_SHA384_HEX = 10;
+const static int32_t DIGEST_SHA_SHA384_BASE64 = 11;
+const static int32_t DIGEST_SHA_SHA512 = 12;
+const static int32_t DIGEST_SHA_SHA512_HEX = 13;
+const static int32_t DIGEST_SHA_SHA512_BASE64 = 14;
+const static int32_t DIGEST_SHA_SHA512224 = 15;
+const static int32_t DIGEST_SHA_SHA512224_HEX = 16;
+const static int32_t DIGEST_SHA_SHA512224_BASE64 = 17;
+const static int32_t DIGEST_SHA_SHA512256 = 18;
+const static int32_t DIGEST_SHA_SHA512256_HEX = 19;
+const static int32_t DIGEST_SHA_SHA512256_BASE64 = 20;
+
 int32_t SPVM__Digest__SHA__sha(SPVM_ENV* env, SPVM_VALUE* stack) {
-ALIAS:
-  Digest::SHA::sha1 = 0
-  Digest::SHA::sha1_hex = 1
-  Digest::SHA::sha1_base64 = 2
-  Digest::SHA::sha224 = 3
-  Digest::SHA::sha224_hex = 4
-  Digest::SHA::sha224_base64 = 5
-  Digest::SHA::sha256 = 6
-  Digest::SHA::sha256_hex = 7
-  Digest::SHA::sha256_base64 = 8
-  Digest::SHA::sha384 = 9
-  Digest::SHA::sha384_hex = 10
-  Digest::SHA::sha384_base64 = 11
-  Digest::SHA::sha512 = 12
-  Digest::SHA::sha512_hex = 13
-  Digest::SHA::sha512_base64 = 14
-  Digest::SHA::sha512224 = 15
-  Digest::SHA::sha512224_hex = 16
-  Digest::SHA::sha512224_base64 = 17
-  Digest::SHA::sha512256 = 18
-  Digest::SHA::sha512256_hex = 19
-  Digest::SHA::sha512256_base64 = 20
   int i;
   unsigned char *data;
   STRLEN len;
@@ -130,29 +130,29 @@ int32_t SPVM__Digest__SHA__sha512256(SPVM_ENV* env, SPVM_VALUE* stack) { return 
 int32_t SPVM__Digest__SHA__sha512256_hex(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
 int32_t SPVM__Digest__SHA__sha512256_base64(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }int32_t SPVM__Digest__SHA__sha1(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
 
+const static int32_t DIGEST_SHA_HMAC_SHA1 = 0;
+const static int32_t DIGEST_SHA_HMAC_SHA1_HEX = 1;
+const static int32_t DIGEST_SHA_HMAC_SHA1_BASE64 = 2;
+const static int32_t DIGEST_SHA_HMAC_SHA224 = 3;
+const static int32_t DIGEST_SHA_HMAC_SHA224_HEX = 4;
+const static int32_t DIGEST_SHA_HMAC_SHA224_BASE64 = 5;
+const static int32_t DIGEST_SHA_HMAC_SHA256 = 6;
+const static int32_t DIGEST_SHA_HMAC_SHA256_HEX = 7;
+const static int32_t DIGEST_SHA_HMAC_SHA256_BASE64 = 8;
+const static int32_t DIGEST_SHA_HMAC_SHA384 = 9;
+const static int32_t DIGEST_SHA_HMAC_SHA384_HEX = 10;
+const static int32_t DIGEST_SHA_HMAC_SHA384_BASE64 = 11;
+const static int32_t DIGEST_SHA_HMAC_SHA512 = 12;
+const static int32_t DIGEST_SHA_HMAC_SHA512_HEX = 13;
+const static int32_t DIGEST_SHA_HMAC_SHA512_BASE64 = 14;
+const static int32_t DIGEST_SHA_HMAC_SHA512224 = 15;
+const static int32_t DIGEST_SHA_HMAC_SHA512224_HEX = 16;
+const static int32_t DIGEST_SHA_HMAC_SHA512224_BASE64 = 17;
+const static int32_t DIGEST_SHA_HMAC_SHA512256 = 18;
+const static int32_t DIGEST_SHA_HMAC_SHA512256_HEX = 19;
+const static int32_t DIGEST_SHA_HMAC_SHA512256_BASE64 = 20;
+
 int32_t SPVM__Digest__SHA__hmac_sha(SPVM_ENV* env, SPVM_VALUE* stack) {
-ALIAS:
-  Digest::SHA::hmac_sha1 = 0
-  Digest::SHA::hmac_sha1_hex = 1
-  Digest::SHA::hmac_sha1_base64 = 2
-  Digest::SHA::hmac_sha224 = 3
-  Digest::SHA::hmac_sha224_hex = 4
-  Digest::SHA::hmac_sha224_base64 = 5
-  Digest::SHA::hmac_sha256 = 6
-  Digest::SHA::hmac_sha256_hex = 7
-  Digest::SHA::hmac_sha256_base64 = 8
-  Digest::SHA::hmac_sha384 = 9
-  Digest::SHA::hmac_sha384_hex = 10
-  Digest::SHA::hmac_sha384_base64 = 11
-  Digest::SHA::hmac_sha512 = 12
-  Digest::SHA::hmac_sha512_hex = 13
-  Digest::SHA::hmac_sha512_base64 = 14
-  Digest::SHA::hmac_sha512224 = 15
-  Digest::SHA::hmac_sha512224_hex = 16
-  Digest::SHA::hmac_sha512224_base64 = 17
-  Digest::SHA::hmac_sha512256 = 18
-  Digest::SHA::hmac_sha512256_hex = 19
-  Digest::SHA::hmac_sha512256_base64 = 20
   int i;
   unsigned char *key = (unsigned char *) "";
   unsigned char *data;
