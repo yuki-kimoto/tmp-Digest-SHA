@@ -11,50 +11,11 @@ int32_t SPVM__Digest__SHA__foo(SPVM_ENV* env, SPVM_VALUE* stack) {
   return 0;
 }
 
-
-#define PERL_NO_GET_CONTEXT
-#include "EXTERN.h"
-#include "perl.h"
-#include "XSUB.h"
-
-#ifdef SvPVbyte
-	#if PERL_REVISION == 5 && PERL_VERSION < 8
-		#undef SvPVbyte
-		#define SvPVbyte(sv, lp) \
-			(sv_utf8_downgrade((sv), 0), SvPV((sv), (lp)))
-	#endif
-#else
-	#define SvPVbyte SvPV
-#endif
-
-#ifndef dTHX
-	#define pTHX_
-	#define aTHX_
-#endif
-
-#ifndef PerlIO
-	#define PerlIO				FILE
-	#define PerlIO_read(f, buf, count)	fread(buf, 1, count, f)
-#endif
-
-#ifndef sv_derived_from
-	#include "sdf.c"
-#endif
-
-#ifndef Newx
-	#define Newx(ptr, num, type)	New(0, ptr, num, type)
-	#define Newxz(ptr, num, type)	Newz(0, ptr, num, type)
-#endif
-
 #include "sha.c"
 
 static const int ix2alg[] =
 	{1,1,1,224,224,224,256,256,256,384,384,384,512,512,512,
 	512224,512224,512224,512256,512256,512256};
-
-#ifndef INT2PTR
-#define INT2PTR(p, i) (p) (i)
-#endif
 
 #define MAX_WRITE_SIZE 16384
 #define IO_BUFFER_SIZE 4096
