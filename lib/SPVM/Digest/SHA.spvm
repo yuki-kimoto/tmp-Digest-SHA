@@ -1,4 +1,5 @@
 class Digest::SHA {
   use Digest::SHA::State;
+  has state : Digest::SHA::State;
   native static method new : Digest::SHA ($alg : int);
 }
