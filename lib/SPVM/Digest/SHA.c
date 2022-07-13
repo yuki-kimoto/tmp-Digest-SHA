@@ -252,7 +252,7 @@ const static int32_t DIGEST_SHA_DIGEST = 0;
 const static int32_t DIGEST_SHA_HEXDIGEST = 1;
 const static int32_t DIGEST_SHA_B64DIGEST = 2;
 
-int32_t SPVM__Digest__SHA__digest(SPVM_ENV* env, SPVM_VALUE* stack) {
+int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
   STRLEN len;
   SHA *state;
@@ -273,6 +273,10 @@ int32_t SPVM__Digest__SHA__digest(SPVM_ENV* env, SPVM_VALUE* stack) {
   sharewind(state);
   return 0;
 }
+
+int32_t SPVM__Digest__SHA__digest(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__hexdigest(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
+int32_t SPVM__Digest__SHA__b64digest(SPVM_ENV* env, SPVM_VALUE* stack) { return 0; }
 
 int32_t SPVM__Digest__SHA___getstate(SPVM_ENV* env, SPVM_VALUE* stack) {
   SV *  self
