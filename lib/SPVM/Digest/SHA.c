@@ -157,7 +157,6 @@ int32_t SPVM__Digest__SHA__sha512256_base64(SPVM_ENV* env, SPVM_VALUE* stack) { 
 
 // HMAC SHA
 static int32_t SPVM__Digest__SHA__hmac_sha(SPVM_ENV* env, SPVM_VALUE* stack) {
-  int i;
   unsigned char *key = (unsigned char *) "";
   unsigned char *data;
   int32_t len = 0;
@@ -169,19 +168,21 @@ static int32_t SPVM__Digest__SHA__hmac_sha(SPVM_ENV* env, SPVM_VALUE* stack) {
   if (!obj_data) {
     return env->die(env, stack, "The input data must be defined", FILE_NAME, __LINE__);
   }
+  data = (unsigned char *)env->get_chars(env, stack, obj_data);
 
   void* obj_key = stack[1].oval;
   
   if (obj_key) {
-    data = (unsigned char *)env->get_chars(env, stack, obj_key);
+    key = (unsigned char *)env->get_chars(env, stack, obj_key);
     len = env->length(env, stack, obj_key);
   }
-  
+
   int32_t ix = stack[2].ival;
   int32_t alg = ix2alg[ix];
-  if (hmacinit(&hmac, alg, key, (UINT) len) == NULL) {
+  if (hmacinit(&hmac, alg, key, (unsigned int) len) == NULL) {
     return env->die(env, stack, "Can't initalize HMAC. The specified algorithm is %d", alg, FILE_NAME, __LINE__);
   }
+  len = env->length(env, stack, obj_data);
   while (len > MAX_WRITE_SIZE) {
     hmacwrite(data, MAX_WRITE_SIZE << 3, &hmac);
     data += MAX_WRITE_SIZE;
@@ -200,6 +201,7 @@ static int32_t SPVM__Digest__SHA__hmac_sha(SPVM_ENV* env, SPVM_VALUE* stack) {
   else {
     result = hmacbase64(&hmac);
   }
+  
   
   void* obj_result = env->new_string(env, stack, result, len > 0 ? len : strlen(result));
   

@@ -278,6 +278,41 @@ for my $sha_func (@sha_funcs) {
   };
 }
 
+my @hmac_sha_funcs = qw(
+  hmac_sha1    hmac_sha1_base64   hmac_sha1_hex
+  hmac_sha224    hmac_sha224_base64   hmac_sha224_hex
+  hmac_sha256    hmac_sha256_base64   hmac_sha256_hex
+  hmac_sha384    hmac_sha384_base64   hmac_sha384_hex
+  hmac_sha512    hmac_sha512_base64   hmac_sha512_hex
+  hmac_sha512224 hmac_sha512224_base64  hmac_sha512224_hex
+  hmac_sha512256 hmac_sha512256_base64  hmac_sha512256_hex
+);
+
+no strict 'refs';
+for my $hmac_sha_func (@hmac_sha_funcs) {
+  *{"Digest::SHA::$hmac_sha_func"} = sub (;@) {
+    my $key;
+    if (@_ > 1) {
+      $key = pop @_;
+    }
+    my (@args) = @_;
+    
+    my $data = join('', @args);
+
+    if ($] >= 5.006) {
+      utf8::downgrade($data);
+    }
+    
+    # warn "BBBBBBB $data";
+    
+    # warn "CCCCCCC " . length $key;
+    
+    my $output = SPVM::Digest::SHA->$hmac_sha_func($data, $key);
+    
+    return $output->to_bin;
+  };
+}
+
 1;
 __END__
 
