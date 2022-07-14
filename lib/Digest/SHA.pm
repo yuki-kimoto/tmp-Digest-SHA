@@ -249,6 +249,8 @@ eval {
 	Digest::SHA->bootstrap($VERSION);
 };
 
+use warnings::register;
+
 use SPVM 'Digest::SHA';
 
 my @sha_funcs = qw(
@@ -304,6 +306,60 @@ for my $hmac_sha_func (@hmac_sha_funcs) {
     }
     
     my $output = SPVM::Digest::SHA->$hmac_sha_func($data, $key);
+    
+    return $output->to_bin;
+  };
+}
+
+{
+  my $orig = \&SPVM::Digest::SHA::add;
+  *SPVM::Digest::SHA::add = sub {
+    my ($self, @args) = @_;
+    
+    if ($^W || warnings::enabled()) {
+      if (defined $args[0] && $args[0] eq 'Digest::SHA') {
+        warn "Digest::SHA::md5 function probably called as class method";
+      }
+    }
+    
+    my $data = join('', @args);
+
+    if ($] >= 5.006) {
+      utf8::downgrade($data);
+    }
+    
+    return $orig->($self, $data);
+  };
+}
+
+{
+  my $orig = \&SPVM::Digest::SHA::digest;
+  *SPVM::Digest::SHA::digest = sub {
+    my ($self) = @_;
+    
+    my $output = $orig->($self);
+    
+    return $output->to_bin;
+  };
+}
+
+{
+  my $orig = \&SPVM::Digest::SHA::hexdigest;
+  *SPVM::Digest::SHA::hexdigest = sub {
+    my ($self) = @_;
+    
+    my $output = $orig->($self);
+    
+    return $output->to_bin;
+  };
+}
+
+{
+  my $orig = \&SPVM::Digest::SHA::b64digest;
+  *SPVM::Digest::SHA::b64digest = sub {
+    my ($self) = @_;
+    
+    my $output = $orig->($self);
     
     return $output->to_bin;
   };
