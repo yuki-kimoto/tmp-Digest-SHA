@@ -303,10 +303,6 @@ for my $hmac_sha_func (@hmac_sha_funcs) {
       utf8::downgrade($data);
     }
     
-    # warn "BBBBBBB $data";
-    
-    # warn "CCCCCCC " . length $key;
-    
     my $output = SPVM::Digest::SHA->$hmac_sha_func($data, $key);
     
     return $output->to_bin;
