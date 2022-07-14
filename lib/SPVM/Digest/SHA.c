@@ -93,6 +93,7 @@ static int32_t SPVM__Digest__SHA__sha(SPVM_ENV* env, SPVM_VALUE* stack) {
 
   shafinish(&sha);
   len = 0;
+  
   if (ix % 3 == 0) {
     result = (char *) shadigest(&sha);
     len = sha.digestlen;
@@ -104,7 +105,7 @@ static int32_t SPVM__Digest__SHA__sha(SPVM_ENV* env, SPVM_VALUE* stack) {
     result = shabase64(&sha);
   }
 
-  void* obj_result = env->new_string(env, stack, result, len);
+  void* obj_result = env->new_string(env, stack, result, len > 0 ? len : strlen(result));
   
   stack[0].oval = obj_result;
   return 0;
@@ -200,7 +201,7 @@ static int32_t SPVM__Digest__SHA__hmac_sha(SPVM_ENV* env, SPVM_VALUE* stack) {
     result = hmacbase64(&hmac);
   }
   
-  void* obj_result = env->new_string(env, stack, result, len);
+  void* obj_result = env->new_string(env, stack, result, len > 0 ? len : strlen(result));
   
   stack[0].oval = obj_result;
   return 0;
@@ -346,7 +347,7 @@ static int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack
     result = shabase64(state);
   }
   
-  void* obj_result = env->new_string(env, stack, result, len);
+  void* obj_result = env->new_string(env, stack, result, len > 0 ? len : strlen(result));
   
   stack[0].oval = obj_result;
   

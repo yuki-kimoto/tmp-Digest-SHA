@@ -249,6 +249,35 @@ eval {
 	Digest::SHA->bootstrap($VERSION);
 };
 
+use SPVM 'Digest::SHA';
+
+my @sha_funcs = qw(
+  sha1    sha1_base64   sha1_hex
+  sha224    sha224_base64   sha224_hex
+  sha256    sha256_base64   sha256_hex
+  sha384    sha384_base64   sha384_hex
+  sha512    sha512_base64   sha512_hex
+  sha512224 sha512224_base64  sha512224_hex
+  sha512256 sha512256_base64  sha512256_hex
+);
+
+no strict 'refs';
+for my $sha_func (@sha_funcs) {
+  *{"Digest::SHA::$sha_func"} = sub (;@) {
+    my (@args) = @_;
+    
+    my $data = join('', @args);
+
+    if ($] >= 5.006) {
+      utf8::downgrade($data);
+    }
+    
+    my $output = SPVM::Digest::SHA->$sha_func($data);
+    
+    return $output->to_bin;
+  };
+}
+
 1;
 __END__
 
