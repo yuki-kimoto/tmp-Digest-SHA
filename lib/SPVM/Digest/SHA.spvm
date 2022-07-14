@@ -58,4 +58,5 @@ class Digest::SHA {
   native method digest : string ();
   native method hexdigest : string ();
   native method b64digest : string ();
+  native method clone : Digest::SHA ();
 }

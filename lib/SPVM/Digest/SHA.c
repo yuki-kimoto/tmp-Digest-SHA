@@ -361,3 +361,33 @@ static int32_t SPVM__Digest__SHA__digest_common(SPVM_ENV* env, SPVM_VALUE* stack
 int32_t SPVM__Digest__SHA__digest(SPVM_ENV* env, SPVM_VALUE* stack) { stack[1].ival = DIGEST_SHA_DIGEST; return SPVM__Digest__SHA__digest_common(env, stack); }
 int32_t SPVM__Digest__SHA__hexdigest(SPVM_ENV* env, SPVM_VALUE* stack) { stack[1].ival = DIGEST_SHA_HEXDIGEST; return SPVM__Digest__SHA__digest_common(env, stack); }
 int32_t SPVM__Digest__SHA__b64digest(SPVM_ENV* env, SPVM_VALUE* stack) { stack[1].ival = DIGEST_SHA_B64DIGEST; return SPVM__Digest__SHA__digest_common(env, stack); }
+
+int32_t SPVM__Digest__SHA__clone(SPVM_ENV* env, SPVM_VALUE* stack) {
+  int32_t e;
+  
+  void* obj_self = stack[0].oval;
+
+  void* obj_state = env->get_field_object_by_name(env, stack, obj_self, "Digest::SHA", "state", "Digest::SHA::State", &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  SHA* state = env->get_pointer(env, stack, obj_state);
+
+  void* obj_self_clone = env->new_object_by_name(env, stack, "Digest::SHA", &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  SHA* state_clone = env->new_memory_stack(env, stack, sizeof(SHA));
+  
+  Copy(state, state_clone, 1, SHA);
+
+  void* obj_state_clone = env->new_object_by_name(env, stack, "Digest::SHA::State", &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  env->set_pointer(env, stack, obj_state_clone, state_clone);
+  
+  env->set_field_object_by_name(env, stack, obj_self_clone, "Digest::SHA", "state", "Digest::SHA::State", obj_state_clone, &e, FILE_NAME, __LINE__);
+  if (e) { return e; }
+  
+  stack[0].oval = obj_self_clone;
+  
+  return 0;
+}
